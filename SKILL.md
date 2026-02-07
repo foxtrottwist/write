@@ -9,11 +9,7 @@ Written communication following quality standards. Three paths based on task com
 
 ## Resume Check
 
-Every invocation, check for existing work:
-
-```bash
-ls .writing/ 2>/dev/null
-```
+Every invocation, check for existing state in `.writing.local/`.
 
 **If state exists**, read `state.json` and offer to resume or start fresh.
 
@@ -21,38 +17,12 @@ ls .writing/ 2>/dev/null
 
 ## Discover
 
-Use **AskUserQuestion** to route the task:
+Infer path from request language:
+- "proofread", "fix grammar", "check this" → **Proofread**
+- "email", "text", "note", "message", "reply" → **Compose Message**
+- "LinkedIn", "cover letter", "blog", "bio", "article" → **Create Content**
 
-```yaml
-Question 1: "What writing task?"
-options:
-  - "Compose a message (email, text, note)"
-  - "Proofread existing text"
-  - "Create professional content"
-
-# If compose:
-Question 2: "Message details?"
-options:
-  - "Professional/formal"
-  - "Colleague/friendly professional"
-  - "Casual/personal"
-
-# If proofread:
-Question 2: "What to preserve?"
-multiSelect: true
-options:
-  - "Tone and voice"
-  - "Formatting"
-  - "Technical terms"
-
-# If create content:
-Question 2: "Content type?"
-options:
-  - "LinkedIn post"
-  - "Cover letter"
-  - "Blog/article"
-  - "Professional bio"
-```
+Infer tone from relationship context (professional, colleague, casual). Use **AskUserQuestion** only when path or tone is genuinely ambiguous.
 
 ## Path: Compose Message
 
@@ -91,7 +61,7 @@ Create initial version applying:
 - Context-specific tone (professional, technical, educational)
 - Structure appropriate to content type
 
-Write to `.writing/{slug}/draft.md`
+Write to `.writing.local/{slug}/draft.md`
 
 ### Phase: Refine
 Present draft for user feedback. Per feedback round:
@@ -117,7 +87,7 @@ Present final version.
 ## State Files (Iterative Only)
 
 ```
-.writing/{slug}/
+.writing.local/{slug}/
 ├── state.json      # Current phase
 ├── brief.md        # Requirements
 ├── draft.md        # Current version
